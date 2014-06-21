@@ -19,6 +19,7 @@
   <ItemGroup>
     <Content Include="app.css" />
     <Content Include="index.html" />
+    <Content Include="index_js.html" />
     <Content Include="web.config" />
   </ItemGroup>
   <ItemGroup>
