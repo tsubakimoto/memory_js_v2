@@ -17,5 +17,24 @@
     <input type="button" id="card_1" value="?" onclick="flip(1);" /><br />
     <input type="button" id="card_2" value="?" onclick="flip(2);" />
     <input type="button" id="card_3" value="?" onclick="flip(3);" />
+
+    <script>
+        var cards = [],
+            CAR_NUM = 4;
+
+        function initCards() {
+            var num,
+                cardIndex;
+            for (var i = 0; i < CAR_NUM; i++) {
+                num = Math.floor(i / 2);
+                do {
+                    cardIndex = Math.floor(Math.random() * CAR_NUM);
+                } while (typeof cards[cardIndex] !== 'undefined');
+                cards[cardIndex] = num;
+            }
+            console.log(cards);
+        }
+        initCards();
+    </script>
 </body>
 </html>
