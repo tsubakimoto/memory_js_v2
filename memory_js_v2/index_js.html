@@ -20,7 +20,50 @@
 
     <script>
         var cards = [],
-            CAR_NUM = 4;
+            CAR_NUM = 4,
+            currentNum,
+            openedCard,
+            correctNum = 0,
+            enableFlip = true;
+
+        function flip(n) {
+            if (!enableFlip) {
+                // ジャッジ中のフリップは無効
+                return;
+            }
+            var card = document.getElementById('card_' + n);
+            if (card.value != '?') {
+                return;
+            }
+            card.value = cards[n];
+            if (typeof currentNum === 'undefined') {
+                // 1枚目
+                openedCard = n;
+                currentNum = cards[n];
+            } else {
+                // 2枚目
+                judge(n);
+                currentNum = undefined;
+            }
+        }
+
+        function judge(n) {
+            if (currentNum == cards[n]) {
+                // 正解
+                correctNum++;
+                if (correctNum == CAR_NUM / 2) {
+                    alert("your score is ...");
+                }
+            } else {
+                // 不正解
+                enableFlip = false;
+                setTimeout(function () {
+                    document.getElementById('card_' + openedCard).value = '?';
+                    document.getElementById('card_' + n).value = '?';
+                    enableFlip = true;
+                }, 700);
+            }
+        }
 
         function initCards() {
             var num,
