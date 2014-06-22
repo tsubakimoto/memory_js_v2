@@ -24,7 +24,9 @@
             currentNum,
             openedCard,
             correctNum = 0,
-            enableFlip = true;
+            enableFlip = true,
+            score = 0,
+            timerId;
 
         function flip(n) {
             if (!enableFlip) {
@@ -52,7 +54,8 @@
                 // 正解
                 correctNum++;
                 if (correctNum == CAR_NUM / 2) {
-                    alert("your score is ...");
+                    clearTimeout(timerId);
+                    alert("your score is " + document.getElementById('score').innerHTML);
                 }
             } else {
                 // 不正解
@@ -77,7 +80,16 @@
             }
             console.log(cards);
         }
+
+        function runTimer() {
+            document.getElementById('score').innerHTML = score++;
+            timerId = setTimeout(function () {
+                runTimer();
+            }, 10);
+        }
+
         initCards();
+        runTimer();
     </script>
 </body>
 </html>
