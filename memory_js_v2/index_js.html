@@ -13,15 +13,11 @@
 <body>
     <h1>神経衰弱ゲーム</h1>
     <p>Score: <span id="score"></span></p>
-    <input type="button" id="card_0" value="?" />
-    <input type="button" id="card_1" value="?" /><br />
-    <input type="button" id="card_2" value="?" />
-    <input type="button" id="card_3" value="?" />
-
+    <div id="stage"></div>
     <script>
         (function () {
             var cards = [],
-                CAR_NUM = 4,
+                CARD_NUN = 4,
                 currentNum,
                 openedCard,
                 correctNum = 0,
@@ -29,32 +25,31 @@
                 score = 0,
                 timerId;
 
-            function flip(n) {
+            function flip(card) {
                 if (!enableFlip) {
                     // ジャッジ中のフリップは無効
                     return;
                 }
-                var card = document.getElementById('card_' + n);
                 if (card.value != '?') {
                     return;
                 }
-                card.value = cards[n];
+                card.value = card.dataset.num;
                 if (typeof currentNum === 'undefined') {
                     // 1枚目
-                    openedCard = n;
-                    currentNum = cards[n];
+                    openedCard = card;
+                    currentNum = card.dataset.num;
                 } else {
                     // 2枚目
-                    judge(n);
+                    judge(card);
                     currentNum = undefined;
                 }
             }
 
-            function judge(n) {
-                if (currentNum == cards[n]) {
+            function judge(card) {
+                if (currentNum == card.dataset.num) {
                     // 正解
                     correctNum++;
-                    if (correctNum == CAR_NUM / 2) {
+                    if (correctNum == CARD_NUN / 2) {
                         clearTimeout(timerId);
                         alert("your score is " + document.getElementById('score').innerHTML);
                     }
@@ -62,8 +57,8 @@
                     // 不正解
                     enableFlip = false;
                     setTimeout(function () {
-                        document.getElementById('card_' + openedCard).value = '?';
-                        document.getElementById('card_' + n).value = '?';
+                        openedCard.value = '?';
+                        card.value = '?';
                         enableFlip = true;
                     }, 700);
                 }
@@ -72,21 +67,32 @@
             function initCards() {
                 var num,
                     cardIndex,
-                    i;
-                for (i = 0; i < CAR_NUM; i++) {
+                    i,
+                    stage = document.getElementById('stage');
+                for (i = 0; i < CARD_NUN; i++) {
                     num = Math.floor(i / 2);
                     do {
-                        cardIndex = Math.floor(Math.random() * CAR_NUM);
+                        cardIndex = Math.floor(Math.random() * CARD_NUN);
                     } while (typeof cards[cardIndex] !== 'undefined');
-                    cards[cardIndex] = num;
+                    cards[cardIndex] = createCard(num);
                 }
-                //console.log(cards);
-                var el = document.getElementsByTagName('input');
-                for (i = 0; i < el.length; i++) {
-                    el[i].onclick = function () {
-                        flip(this.id.replace(/^card_/, ''))
+                for (i = 0; i < CARD_NUN; i++) {
+                    stage.appendChild(cards[i]);
+                    if (i % Math.sqrt(CARD_NUN) == (Math.sqrt(CARD_NUN) - 1)) {
+                        stage.appendChild(document.createElement('br'));
                     }
                 }
+            }
+
+            function createCard(num) {
+                var card = document.createElement('input');
+                card.type = 'button';
+                card.value = '?';
+                card.dataset.num = num;
+                card.onclick = function () {
+                    flip(this);
+                }
+                return card;
             }
 
             function runTimer() {
