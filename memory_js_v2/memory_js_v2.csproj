@@ -20,10 +20,12 @@
     <Content Include="app.css" />
     <Content Include="index.html" />
     <Content Include="index_js.html" />
+    <Content Include="index_ts.html" />
     <Content Include="web.config" />
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="app.ts" />
+    <TypeScriptCompile Include="index_ts.ts" />
   </ItemGroup>
   <ItemGroup>
     <None Include="web.Debug.config">
