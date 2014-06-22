@@ -13,83 +13,92 @@
 <body>
     <h1>神経衰弱ゲーム</h1>
     <p>Score: <span id="score"></span></p>
-    <input type="button" id="card_0" value="?" onclick="flip(0);" />
-    <input type="button" id="card_1" value="?" onclick="flip(1);" /><br />
-    <input type="button" id="card_2" value="?" onclick="flip(2);" />
-    <input type="button" id="card_3" value="?" onclick="flip(3);" />
+    <input type="button" id="card_0" value="?" />
+    <input type="button" id="card_1" value="?" /><br />
+    <input type="button" id="card_2" value="?" />
+    <input type="button" id="card_3" value="?" />
 
     <script>
-        var cards = [],
-            CAR_NUM = 4,
-            currentNum,
-            openedCard,
-            correctNum = 0,
-            enableFlip = true,
-            score = 0,
-            timerId;
+        (function () {
+            var cards = [],
+                CAR_NUM = 4,
+                currentNum,
+                openedCard,
+                correctNum = 0,
+                enableFlip = true,
+                score = 0,
+                timerId;
 
-        function flip(n) {
-            if (!enableFlip) {
-                // ジャッジ中のフリップは無効
-                return;
-            }
-            var card = document.getElementById('card_' + n);
-            if (card.value != '?') {
-                return;
-            }
-            card.value = cards[n];
-            if (typeof currentNum === 'undefined') {
-                // 1枚目
-                openedCard = n;
-                currentNum = cards[n];
-            } else {
-                // 2枚目
-                judge(n);
-                currentNum = undefined;
-            }
-        }
-
-        function judge(n) {
-            if (currentNum == cards[n]) {
-                // 正解
-                correctNum++;
-                if (correctNum == CAR_NUM / 2) {
-                    clearTimeout(timerId);
-                    alert("your score is " + document.getElementById('score').innerHTML);
+            function flip(n) {
+                if (!enableFlip) {
+                    // ジャッジ中のフリップは無効
+                    return;
                 }
-            } else {
-                // 不正解
-                enableFlip = false;
-                setTimeout(function () {
-                    document.getElementById('card_' + openedCard).value = '?';
-                    document.getElementById('card_' + n).value = '?';
-                    enableFlip = true;
-                }, 700);
+                var card = document.getElementById('card_' + n);
+                if (card.value != '?') {
+                    return;
+                }
+                card.value = cards[n];
+                if (typeof currentNum === 'undefined') {
+                    // 1枚目
+                    openedCard = n;
+                    currentNum = cards[n];
+                } else {
+                    // 2枚目
+                    judge(n);
+                    currentNum = undefined;
+                }
             }
-        }
 
-        function initCards() {
-            var num,
-                cardIndex;
-            for (var i = 0; i < CAR_NUM; i++) {
-                num = Math.floor(i / 2);
-                do {
-                    cardIndex = Math.floor(Math.random() * CAR_NUM);
-                } while (typeof cards[cardIndex] !== 'undefined');
-                cards[cardIndex] = num;
+            function judge(n) {
+                if (currentNum == cards[n]) {
+                    // 正解
+                    correctNum++;
+                    if (correctNum == CAR_NUM / 2) {
+                        clearTimeout(timerId);
+                        alert("your score is " + document.getElementById('score').innerHTML);
+                    }
+                } else {
+                    // 不正解
+                    enableFlip = false;
+                    setTimeout(function () {
+                        document.getElementById('card_' + openedCard).value = '?';
+                        document.getElementById('card_' + n).value = '?';
+                        enableFlip = true;
+                    }, 700);
+                }
             }
-            console.log(cards);
-        }
 
-        function runTimer() {
-            document.getElementById('score').innerHTML = score++;
-            timerId = setTimeout(function () {
-                runTimer();
-            }, 10);
-        }
+            function initCards() {
+                var num,
+                    cardIndex,
+                    i;
+                for (i = 0; i < CAR_NUM; i++) {
+                    num = Math.floor(i / 2);
+                    do {
+                        cardIndex = Math.floor(Math.random() * CAR_NUM);
+                    } while (typeof cards[cardIndex] !== 'undefined');
+                    cards[cardIndex] = num;
+                }
+                //console.log(cards);
+                var el = document.getElementsByTagName('input');
+                for (i = 0; i < el.length; i++) {
+                    el[i].onclick = function () {
+                        flip(this.id.replace(/^card_/, ''))
+                    }
+                }
+            }
 
-        initCards();
-        runTimer();
+            function runTimer() {
+                document.getElementById('score').innerHTML = score++;
+                timerId = setTimeout(function () {
+                    runTimer();
+                }, 10);
+            }
+
+            initCards();
+            runTimer();
+        })();
     </script>
 </body>
 </html>
