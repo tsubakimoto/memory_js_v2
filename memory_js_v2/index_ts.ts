@@ -1,7 +1,15 @@
-﻿interface ICard {
+﻿var cards = [],
+    CARD_NUN = 4,
+    currentNum,
+    openedCard,
+    correctNum = 0,
+    enableFlip = true,
+    score = 0,
+    timerId;
+
+interface ICard {
     button: HTMLInputElement;
     value: string;
-
     Initialize(num: number);
     Flip();
 }
@@ -26,20 +34,21 @@ class Card implements ICard {
     }
 
     Flip() {
-        alert('flip!');
+        if (!enableFlip || this.button.value != '?') {
+            return;
+        }
+        this.button.value = this.button.dataset.num;
+        if (typeof currentNum === 'undefined') {
+            openedCard = this.button;
+            currentNum = this.button.dataset.num;
+        } else {
+            Judge(this.button);
+            currentNum = undefined;
+        }
     }
 }
 
-var cards = [],
-    CARD_NUN = 16,
-    currentNum,
-    openedCard,
-    correctNum = 0,
-    enableFlip = true,
-    score = 0,
-    timerId;
-
-window.onload = () => {
+function InitCards() {
     var cardIndex;
     var stage = document.getElementById('stage');
 
@@ -56,4 +65,35 @@ window.onload = () => {
             stage.appendChild(document.createElement('br'));
         }
     }
+}
+
+function Judge(card: HTMLInputElement) {
+    if (currentNum == card.dataset.num) {
+        // 正解
+        correctNum++;
+        if (correctNum == CARD_NUN / 2) {
+            clearTimeout(timerId);
+            alert("your score is " + document.getElementById('score').innerHTML);
+        }
+    } else {
+        // 不正解
+        enableFlip = false;
+        setTimeout(function () {
+            openedCard.value = '?';
+            card.value = '?';
+            enableFlip = true;
+        }, 700);
+    }
+}
+
+function RunTimer() {
+    document.getElementById('score').innerHTML = (score++).toString();
+    timerId = setTimeout(() => {
+        RunTimer();
+    }, 10);
+}
+
+window.onload = () => {
+    InitCards();
+    RunTimer();
 }
